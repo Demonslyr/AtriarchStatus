@@ -1,0 +1,20 @@
+stages:
+- name: build
+  steps:
+  - publishImageConfig:
+      dockerfilePath: ./Dockerfile
+      buildContext: ./src
+      tag: atriarch-status:v1.0.${CICD_EXECUTION_SEQUENCE}
+      registry: 127.0.0.1:34443
+- name: Deploy
+  steps:
+  - applyYamlConfig:
+      path: ./service.yaml
+timeout: 10
+notification:
+  recipients:
+  - recipient: dan@mail.atriarch.systems
+    notifier: c-xc9r9:n-g2gcc
+  condition:
+  - Success
+  - Failed

@@ -1,0 +1,13 @@
+apiVersion: serving.knative.dev/v1 # Current version of Knative
+kind: Service
+metadata:
+  name: atriarch-status # The name of the app
+  namespace: atriarch-status # The namespace the app will use
+spec:
+  template:
+    spec:
+      containers:
+        - name: atriarch-status
+          image: ${CICD_IMAGE}:v1.0.${CICD_EXECUTION_SEQUENCE} # The URL to the image of the app
+      imagePullSecrets:
+      - name: as-regcred
