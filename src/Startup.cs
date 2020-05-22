@@ -1,12 +1,13 @@
+using AtriarchStatus.StatusClients.StarCitizen;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OwOConverter.StringExtensions.OwOConverter;
+using System;
 
-namespace OwOConverter
+namespace AtriarchStatus
 {
     public class Startup
     {
@@ -14,6 +15,8 @@ namespace OwOConverter
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpClient();
+            services.AddSingleton<StarCitizenStatus>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -25,28 +28,36 @@ namespace OwOConverter
             }
 
             app.UseRouting();
+            app.UseResponseCaching();
 
+            app.Use(async (context, next) =>
+            {
+                context.Response.GetTypedHeaders().CacheControl =
+                    new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
+                    {
+                        Public = true,
+                        MaxAge = TimeSpan.FromSeconds(15)
+                    };
+                context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] =
+                    new string[] { "Accept-Encoding" };
+
+                await next();
+            });
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
+                endpoints.MapGet("/StarCitizen/GlobalStatus", async context =>
                 {
-                    const string resultString = @"Send a string in the url! Like ""/hello""";
-                    await context.Response.WriteAsync(resultString.ConvertToOwO());
-                });
-                endpoints.MapGet("/{text}", async context =>
-                {
-                    var resultString = "If you see this your string was bad. Sorry!";
+                    var resultString = "Failed to get status.";
                     try
                     {
-                        var inputString = context.GetRouteValue("text").ToString();
-                        if (!string.IsNullOrWhiteSpace(inputString))
-                            resultString = inputString;
+                        var scStatus = context.RequestServices.GetRequiredService<StarCitizenStatus>();
+                        var statusResult = await scStatus.GetGlobalStatus();
+                        if (!string.IsNullOrWhiteSpace(statusResult))
+                            resultString = statusResult;
                     }
-                    catch
-                    { }
                     finally
                     {
-                        await context.Response.WriteAsync(resultString.ConvertToOwO());
+                        await context.Response.WriteAsync(resultString);
                     }
                 });
             });

@@ -7,14 +7,14 @@ WORKDIR /app
 # Install production dependencies.
 # Copy csproj and restore as distinct layers.
 COPY *.csproj ./
-RUN dotnet restore "OwOConverter.csproj"
+RUN dotnet restore "AtriarchStatus.csproj"
 
 # Copy local code to the container image.
 COPY . ./
 WORKDIR /app
 
 # Build a release artifact.
-RUN dotnet publish "OwOConverter.csproj" -c Release -o out
+RUN dotnet publish "AtriarchStatus.csproj" -c Release -o out
 
 
 # Use Microsoft's official runtime .NET image.
@@ -24,4 +24,4 @@ WORKDIR /app
 COPY --from=build /app/out ./
 
 # Run the web service on container startup.
-ENTRYPOINT ["dotnet", "OwOConverter.dll"]
+ENTRYPOINT ["dotnet", "AtriarchStatus.dll"]
