@@ -7,7 +7,7 @@ namespace AtriarchStatus.StatusClients.StarCitizen
     public class StarCitizenStatus
     {
         private readonly IHttpClientFactory _clientFactory;
-        StarCitizenStatus(IHttpClientFactory clientFactory)
+        public StarCitizenStatus(IHttpClientFactory clientFactory)
         {
             _clientFactory = clientFactory;
         }
