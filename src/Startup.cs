@@ -51,7 +51,11 @@ namespace AtriarchStatus
                     }
                     finally
                     {
-                        await context.Response.WriteAsync(resultString);
+                        await context.Response.WriteAsync(
+                            @"<html><head><meta http-equiv="refresh" content="30"></head><body>"+
+                            resultString
+                            +@"</body></html>"
+                        );
                     }
                 });
             });
