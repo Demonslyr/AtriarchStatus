@@ -4,7 +4,7 @@ metadata:
   name: atriarch-status # The name of the app
   namespace: atriarch-status # The namespace the app will use
   labels:
-    - domain: atriarch
+    domain: atriarch
 spec:
   template:
     spec:
