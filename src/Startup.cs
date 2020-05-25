@@ -40,7 +40,7 @@ namespace AtriarchStatus
                         var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
                         var cacheEntry = await cache.GetOrCreateAsync<string>("StarCitizen/GlobalStatus", async entry =>
                         {
-                            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60);
+                            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(300);
                             var scStatus = context.RequestServices.GetRequiredService<StarCitizenStatus>();
                             var statusResult = await scStatus.GetGlobalStatus();
                             return string.IsNullOrWhiteSpace(statusResult)
