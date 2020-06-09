@@ -17,5 +17,4 @@ notification:
   - recipient: dan@mail.atriarch.systems
     notifier: c-xc9r9:n-g2gcc
   condition:
-  - Success
   - Failed
