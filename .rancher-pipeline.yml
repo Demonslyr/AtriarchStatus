@@ -4,9 +4,9 @@ stages:
   - publishImageConfig:
       dockerfilePath: ./Dockerfile
       buildContext: ./src
-      tag: 	nexus.atriarch.systems/repository/atriarch-docker/atriarch-status:v1.0.${CICD_EXECUTION_SEQUENCE}
+      tag: nexus.atriarch.systems/repository/atriarch-docker/atriarch-status:v1.0.${CICD_EXECUTION_SEQUENCE}
       pushRemote: true
-      registry: index.docker.io
+      registry: nexus.atriarch.systems/repository/atriarch-docker/
 - name: Deploy
   steps:
   - applyYamlConfig:
