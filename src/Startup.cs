@@ -64,6 +64,10 @@ namespace AtriarchStatus
                         });
                         resultString = cacheEntry;
                     }
+                    catch (Exception e)
+                    {
+                        resultString = e.Message;
+                    }
                     finally
                     {
                         await context.Response.WriteAsync(resultString);
