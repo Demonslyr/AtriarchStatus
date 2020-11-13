@@ -179,7 +179,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                 }}
             }}, 1000);
             function copyMacroToClipboard(x,y) {{
-              var macroText = `/run b=C_Map;c='player';d=b.GetBestMapForUnit(c);b.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(d,${{x}},${{y}}));`;
+              var macroText = `/run C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(118,${{x}}/100,${{y}}/100));`;
               navigator.clipboard.writeText(macroText);
               alert(""Copied to clipboard: "" + macroText);
             }}
