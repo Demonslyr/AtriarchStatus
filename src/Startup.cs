@@ -25,8 +25,6 @@ namespace AtriarchStatus
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
-
             services.AddMemoryCache();
             services.AddHttpClient();
             services.AddSingleton<StarCitizenStatus>();
@@ -67,18 +65,17 @@ namespace AtriarchStatus
                         await context.Response.WriteAsync(resultString);
                     }
                 });
-                endpoints.MapControllers();
-/*                endpoints.MapGet("/wow/icrares", async context =>
+                endpoints.MapGet("/wow/icrares", async context =>
                 {
                     var resultString = "Failed to get status";
                     try
                     {
                         var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
-                        var cacheEntry = await cache.GetOrCreateAsync<string>("wow/icrares", async entry =>
+                        var cacheEntry = cache.GetOrCreate<string>("wow/icrares", entry =>
                         {
                             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(15);
                             var icrares = context.RequestServices.GetRequiredService<IcecrownRaresStatus>();
-                            var statusResult = await icrares.GetUpcomingRare();
+                            var statusResult = icrares.GetUpcomingRare();
                             return string.IsNullOrWhiteSpace(statusResult)
                                 ? "Failed to get status"
                                 : statusResult;
@@ -90,7 +87,7 @@ namespace AtriarchStatus
                         context.Response.ContentType = "html";
                         await context.Response.WriteAsync(resultString,Encoding.UTF8);
                     }
-                });*/
+                });
             });
         }
     }

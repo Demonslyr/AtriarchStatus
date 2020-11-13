@@ -1,18 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Immutable;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace AtriarchStatus.StatusClients.WorldOfWarcraft
 {
-    public class IcecrownRaresStatus : Controller
+    public class IcecrownRaresStatus
     {
-        private readonly IMemoryCache _cache;
-        public IcecrownRaresStatus(IMemoryCache cache)
-        {
-            _cache = cache;
-        }
         private class RareDescription
         {
             public string Name;
@@ -53,32 +45,6 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
         private static readonly DateTime BaseDate = new DateTime(2020, 11, 12, 23, 0, 0); //noth-the-plaguebringer start utc
         private readonly TimeZoneInfo cstZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
         private const string PrepatchInfoWowHeadUrl = @"https://www.wowhead.com/guides/shadowlands-deaths-rising-prelaunch-event-scourge-invasions#icecrown-bosses";
-
-        [HttpGet]
-        [Route("wow/icrares")]
-        public async Task<IActionResult> GetCachedUpcomingRares()
-        {
-            var resultString = "<html><body>Failed to get status</body></html>";
-            try
-            {
-                var cacheEntry = _cache.GetOrCreate<string>("wow/icrares", entry =>
-                {
-                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(15);
-                    var statusResult = GetUpcomingRare();
-                    return string.IsNullOrWhiteSpace(statusResult)
-                        ? "<html><body>Failed to get status</body></html>"
-                        : statusResult;
-                });
-                resultString = cacheEntry;
-            }
-            catch
-            {
-                // I don't care if this fails
-            }
-
-            ViewBag.HtmlOutput(resultString);
-            return View("~/StatusClients/WorldOfWarcraft/icrares.cshtml");
-        }
         public string GetUpcomingRare()
         {
             // All time is in UTC
@@ -102,11 +68,10 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
 
             // Link to wowhead page detailing the event
             // https://www.w3schools.com/ amalgamation
-            var responsePage = $@"<!DOCTYPE HTML>
+            return $@"<!DOCTYPE HTML>
             <html>
             <head>
-            <meta name=""viewport"" content=""width = device - width, initial - scale = 1"">
-            < style >
+            <style>
                 p {{
                 text - align: center;
                 font - size: 60px;
@@ -125,52 +90,52 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                 }}
 
                 tr:nth-child(even){{background-color: #f2f2f2}}
-            </ style >
-                </ head >
-                < body >
+            </style>
+                </head>
+                <body>
                 <a href=""{PrepatchInfoWowHeadUrl}"" target=""_blank""><h2>Prepatch Wowhead Info</h2></a>
                 <div style=""overflow - x:auto; "">
-                < table >
+                <table>
    
-                < tr >
-                    < th ></ th >
-                    < th > Name </ th >
-                    < th > Start Time </ th >
-                    < th > Countdown </ th >
-                    < th > Wowhead Mob Info </ th >
-                    < th > Map Waypoint </ th >
-                </ tr >
+                <tr>
+                    <th></th>
+                    <th> Name </th>
+                    <th> Start Time </th>
+                    <th> Countdown </th>
+                    <th> Wowhead Mob Info </th>
+                    <th> Map Waypoint </th>
+                </tr>
          
-                < tr >
-                    < td > Last Rare </ td >
-                    < td > {lastRare.Name} </ td >
-                    < td > {TimeZoneInfo.ConvertTimeFromUtc(lastStartTime, cstZone).ToShortTimeString()} CST </ td >
-                    < td id = ""last""></ td >
-                    < td > <a href=""{lastRare.WowHeadUrl}"" target=""_blank"">Link</a> </ td >
-                    < td > <button onclick=""copyMacroToClipboard({lastRare.Xcoord},{lastRare.Ycoord})"" >Copy Macro</button> </ td >
-                </ tr >
+                <tr>
+                    <td> Last Rare </td>
+                    <td> {lastRare.Name} </td>
+                    <td> {TimeZoneInfo.ConvertTimeFromUtc(lastStartTime, cstZone).ToShortTimeString()} CST </td>
+                    <td id = ""last""></td>
+                    <td> <a href=""{lastRare.WowHeadUrl}"" target=""_blank"">Link</a> </td>
+                    <td> <button onclick=""copyMacroToClipboard({lastRare.Xcoord},{lastRare.Ycoord})"">Copy Macro</button> </td>
+                </tr>
          
-                < tr >
-                    < td > Upcoming Rare </ td >
-                    < td > {upcomingRare.Name} </ td >
-                    < td > {TimeZoneInfo.ConvertTimeFromUtc(upcomingStartTime, cstZone).ToShortTimeString()} CST </ td >
-                    < td id = ""upcoming""></ td >
-                    < td > <a href=""{upcomingRare.WowHeadUrl}"" target=""_blank"">Link</a> </ td >
-                    < td > <button onclick=""copyMacroToClipboard({upcomingRare.Xcoord},{upcomingRare.Ycoord})"">Copy Macro</button> </ td >
-                </ tr >
+                <tr>
+                    <td> Upcoming Rare </td>
+                    <td> {upcomingRare.Name} </td>
+                    <td> {TimeZoneInfo.ConvertTimeFromUtc(upcomingStartTime, cstZone).ToShortTimeString()} CST </td>
+                    <td id = ""upcoming""></td>
+                    <td> <a href=""{upcomingRare.WowHeadUrl}"" target=""_blank"">Link</a> </td>
+                    <td> <button onclick=""copyMacroToClipboard({upcomingRare.Xcoord},{upcomingRare.Ycoord})"">Copy Macro</button> </td>
+                </tr>
          
-                < tr >
-                    < td > Next Rare </ td >
-                    < td > {nextRare.Name} </ td >
-                    < td > {TimeZoneInfo.ConvertTimeFromUtc(nextStartTime, cstZone).ToShortTimeString()} CST </ td >
-                    < td id = ""next""></ td >
-                    < td > <a href=""{nextRare.WowHeadUrl}"" target=""_blank"">Link</a> </ td >
-                    < td > <button onclick=""copyMacroToClipboard({nextRare.Xcoord},{nextRare.Ycoord})"">Copy Macro</button> </ td >
-                </ tr >
+                <tr>
+                    <td> Next Rare </td>
+                    <td> {nextRare.Name} </td>
+                    <td> {TimeZoneInfo.ConvertTimeFromUtc(nextStartTime, cstZone).ToShortTimeString()} CST </td>
+                    <td id = ""next""></td>
+                    <td> <a href=""{nextRare.WowHeadUrl}"" target=""_blank"">Link</a> </td>
+                    <td> <button onclick=""copyMacroToClipboard({nextRare.Xcoord},{nextRare.Ycoord})"">Copy Macro</button> </td>
+                </tr>
 
-                </ table >
-                </ div >
-             < script >
+                </table>
+                </div>
+             <script>
                 // Set the date we're counting down to
                 var countDownDate = new Date(""Jan 5, 2021 15:37:25"").getTime();
 
@@ -193,7 +158,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                 document.getElementById(""next"").innerHTML = minutes + ""m "" + seconds + ""s "";
 
                 // If the count down is over, write some text 
-                if (distance < 0)
+                if (distance <0)
                 {{
                     clearInterval(x);
                     document.getElementById(""demo"").innerHTML = ""Spawned"";
@@ -204,10 +169,9 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
               navigator.clipboard.writeText(macroText);
               alert(""Copied to clipboard: "" + macroText);
             }}
-            </ script >
-            </ body >
-            </ html >"; 
-            return responsePage;
+            </script>
+            </body>
+            </html>";
         }
     }
 }
