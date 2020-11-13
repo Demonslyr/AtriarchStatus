@@ -76,7 +76,7 @@ namespace AtriarchStatus
                     try
                     {
                         var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
-                        var cacheEntry = cache.GetOrCreateAsync<string>("wow/icrares", async entry =>
+                        var cacheEntry = await cache.GetOrCreateAsync<string>("wow/icrares", async entry =>
                         {
                             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(15);
                             var icrares = context.RequestServices.GetRequiredService<IcecrownRaresStatus>();
@@ -85,7 +85,7 @@ namespace AtriarchStatus
                                 ? "Failed to get status"
                                 : statusResult;
                         });
-                        resultString = await cacheEntry;
+                        resultString = cacheEntry;
                     }
                     finally
                     {
