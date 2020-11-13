@@ -3,22 +3,14 @@ using AtriarchStatus.StatusClients.WorldOfWarcraft;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Text;
-using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace AtriarchStatus
 {
-    public class HtmlOutputFormatter : StringOutputFormatter
-    {
-        public HtmlOutputFormatter()
-        {
-            SupportedMediaTypes.Add("text/html");
-        }
-    }
     public class Startup
     {
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -44,13 +36,38 @@ namespace AtriarchStatus
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Healthy"); });
+                endpoints.MapGet("/wow/icrares", async context =>
+                {
+                    const string failureResponse = @"<html><head><meta http-equiv=""refresh"" content=""30""></head><body>" +
+                                       "Failed to get status"
+                                       + @"</body></html>";
+                    var resultString = failureResponse;
+                    try
+                    {
+                        var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
+                        var cacheEntry = cache.GetOrCreate("wow/icrares", entry =>
+                        {
+                            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(30);
+                            var icrares = context.RequestServices.GetRequiredService<IcecrownRaresStatus>();
+                            var statusResult = icrares.GetUpcomingRare();
+                            return string.IsNullOrWhiteSpace(statusResult)
+                                ? failureResponse
+                                : statusResult;
+                        });
+                        resultString = cacheEntry;
+                    }
+                    finally
+                    {
+                        await context.Response.WriteAsync(resultString);
+                    }
+                });
                 endpoints.MapGet("/StarCitizen/GlobalStatus", async context =>
                 {
                     var resultString = "Failed to get status.";
                     try
                     {
                         var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
-                        var cacheEntry = await cache.GetOrCreateAsync<string>("StarCitizen/GlobalStatus", async entry =>
+                        var cacheEntry = await cache.GetOrCreateAsync("StarCitizen/GlobalStatus", async entry =>
                         {
                             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(300);
                             var scStatus = context.RequestServices.GetRequiredService<StarCitizenStatus>();
@@ -70,13 +87,13 @@ namespace AtriarchStatus
                         );
                     }
                 });
-                endpoints.MapGet("/wow/icrares", async context =>
+/*                endpoints.MapGet("/wow/icrares", async context =>
                 {
                     var resultString = "Failed to get status";
                     try
                     {
                         var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
-                        var cacheEntry = cache.GetOrCreateAsync<string>("wow/icrares", async entry =>
+                        var cacheEntry = await cache.GetOrCreateAsync("wow/icrares", async entry =>
                         {
                             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(15);
                             var icrares = context.RequestServices.GetRequiredService<IcecrownRaresStatus>();
@@ -85,13 +102,13 @@ namespace AtriarchStatus
                                 ? "Failed to get status"
                                 : statusResult;
                         });
-                        resultString = await cacheEntry;
+                        resultString = cacheEntry;
                     }
                     finally
                     {
                         await context.Response.WriteAsync(resultString);
                     }
-                });
+                });*/
             });
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using TimeZoneConverter;
 
 namespace AtriarchStatus.StatusClients.WorldOfWarcraft
 {
@@ -43,7 +44,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
         private const int RareRotationTotal = 400; //minutes
         private const int RareSpawnOffset = 20; // minutes
         private static readonly DateTime BaseDate = new DateTime(2020, 11, 12, 23, 0, 0); //noth-the-plaguebringer start utc
-        private readonly TimeZoneInfo _cstZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
+        private readonly TimeZoneInfo _cstZone = TimeZoneInfo.CreateCustomTimeZone("Central Standard Time", new TimeSpan(-6,00,00), "(GMT - 06:00) America/Chicago", "Central Standard Time");
         private const string PrepatchInfoWowHeadUrl = @"https://www.wowhead.com/guides/shadowlands-deaths-rising-prelaunch-event-scourge-invasions#icecrown-bosses";
         private static int Mod(int x, int m)
         {
@@ -107,34 +108,30 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                     <th> Name </th>
                     <th> Start Time </th>
                     <th> Countdown </th>
-                    <th> Wowhead Mob Info </th>
                     <th> Map Waypoint </th>
                 </tr>
          
                 <tr>
                     <td> Last Rare </td>
-                    <td> {lastRare.Name} </td>
+                    <td> <a href=""{lastRare.WowHeadUrl}"" target=""_blank"">{lastRare.Name}</a> </td>
                     <td> {TimeZoneInfo.ConvertTimeFromUtc(lastStartTime, _cstZone).ToShortTimeString()} CST </td>
                     <td id = ""last""></td>
-                    <td> <a href=""{lastRare.WowHeadUrl}"" target=""_blank"">Link</a> </td>
                     <td> <button onclick=""copyMacroToClipboard({lastRare.Xcoord},{lastRare.Ycoord})"">Copy Macro</button> </td>
                 </tr>
          
                 <tr>
                     <td> Upcoming Rare </td>
-                    <td> {upcomingRare.Name} </td>
+                    <td> <a href=""{upcomingRare.WowHeadUrl}"" target=""_blank"">{upcomingRare.Name}</a> </td>
                     <td> {TimeZoneInfo.ConvertTimeFromUtc(upcomingStartTime, _cstZone).ToShortTimeString()} CST </td>
                     <td id = ""upcoming""></td>
-                    <td> <a href=""{upcomingRare.WowHeadUrl}"" target=""_blank"">Link</a> </td>
                     <td> <button onclick=""copyMacroToClipboard({upcomingRare.Xcoord},{upcomingRare.Ycoord})"">Copy Macro</button> </td>
                 </tr>
          
                 <tr>
                     <td> Next Rare </td>
-                    <td> {nextRare.Name} </td>
+                    <td> <a href=""{nextRare.WowHeadUrl}"" target=""_blank"">{nextRare.Name}</a> </td>
                     <td> {TimeZoneInfo.ConvertTimeFromUtc(nextStartTime, _cstZone).ToShortTimeString()} CST </td>
                     <td id = ""next""></td>
-                    <td> <a href=""{nextRare.WowHeadUrl}"" target=""_blank"">Link</a> </td>
                     <td> <button onclick=""copyMacroToClipboard({nextRare.Xcoord},{nextRare.Ycoord})"">Copy Macro</button> </td>
                 </tr>
 
