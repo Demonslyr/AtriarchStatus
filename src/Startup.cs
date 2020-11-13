@@ -44,15 +44,15 @@ namespace AtriarchStatus
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Healthy"); });
-                endpoints.MapGet("/Test/Endpoint", async context =>
+                endpoints.MapGet("/WoW/ICRares", async context =>
                 {
                     var resultString = "NewEndpoint.";
                     try
                     {
                         var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
-                        var cacheEntry = await cache.GetOrCreateAsync<string>("StarCitizen/GlobalStatus", async entry =>
+                        var cacheEntry = await cache.GetOrCreateAsync("WoW/ICRares", async entry =>
                         {
-                            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(300);
+                            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(30);
                             
                             return "This is a test";
                         });
@@ -73,7 +73,7 @@ namespace AtriarchStatus
                     try
                     {
                         var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
-                        var cacheEntry = await cache.GetOrCreateAsync<string>("StarCitizen/GlobalStatus", async entry =>
+                        var cacheEntry = await cache.GetOrCreateAsync("StarCitizen/GlobalStatus", async entry =>
                         {
                             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(300);
                             var scStatus = context.RequestServices.GetRequiredService<StarCitizenStatus>();
@@ -93,13 +93,13 @@ namespace AtriarchStatus
                         );
                     }
                 });
-                endpoints.MapGet("/wow/icrares", async context =>
+/*                endpoints.MapGet("/wow/icrares", async context =>
                 {
                     var resultString = "Failed to get status";
                     try
                     {
                         var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
-                        var cacheEntry = await cache.GetOrCreateAsync<string>("wow/icrares", async entry =>
+                        var cacheEntry = await cache.GetOrCreateAsync("wow/icrares", async entry =>
                         {
                             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(15);
                             var icrares = context.RequestServices.GetRequiredService<IcecrownRaresStatus>();
@@ -114,7 +114,7 @@ namespace AtriarchStatus
                     {
                         await context.Response.WriteAsync(resultString);
                     }
-                });
+                });*/
             });
         }
     }
