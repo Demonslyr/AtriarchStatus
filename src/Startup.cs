@@ -43,6 +43,7 @@ namespace AtriarchStatus
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Healthy"); });
                 endpoints.MapGet("/StarCitizen/GlobalStatus", async context =>
                 {
                     var resultString = "Failed to get status.";
