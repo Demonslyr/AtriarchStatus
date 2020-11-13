@@ -83,13 +83,13 @@ namespace AtriarchStatus
                             var statusResult = icrares.GetUpcomingRare();
                             return string.IsNullOrWhiteSpace(statusResult)
                                 ? "Failed to get status"
-                                : "Failed to get status";//statusResult;
+                                : statusResult;
                         });
                         resultString = await cacheEntry;
                     }
                     finally
                     {
-                        await context.Response.WriteAsync(resultString);
+                        await context.Response.WriteAsync("Basic Result");
                     }
                 });
             });
