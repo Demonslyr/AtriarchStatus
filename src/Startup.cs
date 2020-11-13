@@ -44,6 +44,29 @@ namespace AtriarchStatus
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Healthy"); });
+                endpoints.MapGet("/Test/Endpoint", async context =>
+                {
+                    var resultString = "NewEndpoint.";
+                    try
+                    {
+                        var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
+                        var cacheEntry = await cache.GetOrCreateAsync<string>("StarCitizen/GlobalStatus", async entry =>
+                        {
+                            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(300);
+                            
+                            return "This is a test";
+                        });
+                        resultString = cacheEntry;
+                    }
+                    finally
+                    {
+                        await context.Response.WriteAsync(
+                            @"<html><head><meta http-equiv=""refresh"" content=""30""></head><body>" +
+                            resultString
+                            + @"</body></html>"
+                        );
+                    }
+                });
                 endpoints.MapGet("/StarCitizen/GlobalStatus", async context =>
                 {
                     var resultString = "Failed to get status.";
@@ -89,9 +112,7 @@ namespace AtriarchStatus
                     }
                     finally
                     {
-                        await context.Response.WriteAsync(@"<html><head><meta http-equiv=""refresh"" content=""30""></head><body>" +
-                                                          "Basic Result"
-                                                          + @"</body></html>");
+                        await context.Response.WriteAsync(resultString);
                     }
                 });
             });
