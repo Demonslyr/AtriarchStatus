@@ -7,9 +7,18 @@ metadata:
     domain: atriarch
 spec:
   template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "10"
     spec:
       containers:
         - name: atriarch-status
           image: ${CICD_IMAGE}:v1.0.${CICD_EXECUTION_SEQUENCE} # The URL to the image of the app
+          livenessProbe:
+            httpGet:
+              path: /
+          readinessProbe:
+            httpGet:
+              path: /
       imagePullSecrets:
-      - name: 	atriarch-systems-docker-group
+      - name: atriarch-systems-docker-group
