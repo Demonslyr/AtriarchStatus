@@ -49,7 +49,9 @@ namespace AtriarchStatus
                     const string failureResponse = @"<html><head><meta http-equiv=""refresh"" content=""30""></head><body>" +
                                        "Failed to get status"
                                        + @"</body></html>";
-                    var resultString = failureResponse;
+                    var resultString = @"<html><head><meta http-equiv=""refresh"" content=""30""></head><body>" +
+                                       "Initial Status"
+                                       + @"</body></html>";
                     try
                     {
                         var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
