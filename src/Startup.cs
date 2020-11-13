@@ -53,8 +53,11 @@ namespace AtriarchStatus
                         var cacheEntry = await cache.GetOrCreateAsync("WoW/ICRares", async entry =>
                         {
                             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(30);
-                            
-                            return "This is a test";
+                            var icrares = context.RequestServices.GetRequiredService<IcecrownRaresStatus>();
+                            var statusResult = icrares.GetUpcomingRare();
+                            return string.IsNullOrWhiteSpace(statusResult)
+                                ? "Failed to get status"
+                                : statusResult;
                         });
                         resultString = cacheEntry;
                     }
