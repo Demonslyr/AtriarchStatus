@@ -43,21 +43,25 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
         private const int RareRotationTotal = 400; //minutes
         private const int RareSpawnOffset = 20; // minutes
         private static readonly DateTime BaseDate = new DateTime(2020, 11, 12, 23, 0, 0); //noth-the-plaguebringer start utc
-        private readonly TimeZoneInfo cstZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
+        private readonly TimeZoneInfo _cstZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
         private const string PrepatchInfoWowHeadUrl = @"https://www.wowhead.com/guides/shadowlands-deaths-rising-prelaunch-event-scourge-invasions#icecrown-bosses";
+        private static int Mod(int x, int m)
+        {
+            var r = x % m;
+            return r < 0 ? r + m : r;
+        }
         public string GetUpcomingRare()
         {
             // All time is in UTC
-            var now = DateTime.UtcNow;
-            int minutesApart = (now - BaseDate).Minutes;
+            var minutesApart = (int)(DateTime.UtcNow - BaseDate).TotalMinutes;
             var rotationsSinceBase = minutesApart / RareRotationTotal;
-            int spawnsIntoRotation = (minutesApart % RareRotationTotal) / RareSpawnOffset;
-            DateTime lastStartTime = BaseDate.AddMinutes(rotationsSinceBase * RareRotationTotal).AddMinutes((spawnsIntoRotation - 1) * RareSpawnOffset);
-            DateTime upcomingStartTime = BaseDate.AddMinutes(rotationsSinceBase * RareRotationTotal).AddMinutes(spawnsIntoRotation * RareSpawnOffset);
-            DateTime nextStartTime = BaseDate.AddMinutes(rotationsSinceBase * RareRotationTotal).AddMinutes((spawnsIntoRotation + 1) * RareSpawnOffset);
-            var lastRare = Rares[Math.Abs((spawnsIntoRotation - 1) % 20)];
-            var upcomingRare = Rares[(spawnsIntoRotation) % 20];
-            var nextRare = Rares[(spawnsIntoRotation + 1) % 20];
+            var spawnsIntoRotation = Mod(minutesApart, RareRotationTotal) / RareSpawnOffset;
+            var lastStartTime = BaseDate.AddMinutes(rotationsSinceBase * RareRotationTotal).AddMinutes(spawnsIntoRotation * RareSpawnOffset);
+            var upcomingStartTime = BaseDate.AddMinutes(rotationsSinceBase * RareRotationTotal).AddMinutes((spawnsIntoRotation+1) * RareSpawnOffset);
+            var nextStartTime = BaseDate.AddMinutes(rotationsSinceBase * RareRotationTotal).AddMinutes((spawnsIntoRotation + 2) * RareSpawnOffset);
+            var lastRare = Rares[Mod(spawnsIntoRotation, RareSpawnOffset)];
+            var upcomingRare = Rares[Mod(spawnsIntoRotation+1, RareSpawnOffset)];
+            var nextRare = Rares[Mod(spawnsIntoRotation + 2, RareSpawnOffset)];
 
             // get current time
             // offset the base time to current rotation
@@ -71,6 +75,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
             return $@"<!DOCTYPE HTML>
             <html>
             <head>
+            <meta http-equiv=""refresh"" content=""30"">
             <style>
                 p {{
                 text - align: center;
@@ -109,7 +114,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                 <tr>
                     <td> Last Rare </td>
                     <td> {lastRare.Name} </td>
-                    <td> {TimeZoneInfo.ConvertTimeFromUtc(lastStartTime, cstZone).ToShortTimeString()} CST </td>
+                    <td> {TimeZoneInfo.ConvertTimeFromUtc(lastStartTime, _cstZone).ToShortTimeString()} CST </td>
                     <td id = ""last""></td>
                     <td> <a href=""{lastRare.WowHeadUrl}"" target=""_blank"">Link</a> </td>
                     <td> <button onclick=""copyMacroToClipboard({lastRare.Xcoord},{lastRare.Ycoord})"">Copy Macro</button> </td>
@@ -118,7 +123,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                 <tr>
                     <td> Upcoming Rare </td>
                     <td> {upcomingRare.Name} </td>
-                    <td> {TimeZoneInfo.ConvertTimeFromUtc(upcomingStartTime, cstZone).ToShortTimeString()} CST </td>
+                    <td> {TimeZoneInfo.ConvertTimeFromUtc(upcomingStartTime, _cstZone).ToShortTimeString()} CST </td>
                     <td id = ""upcoming""></td>
                     <td> <a href=""{upcomingRare.WowHeadUrl}"" target=""_blank"">Link</a> </td>
                     <td> <button onclick=""copyMacroToClipboard({upcomingRare.Xcoord},{upcomingRare.Ycoord})"">Copy Macro</button> </td>
@@ -127,7 +132,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                 <tr>
                     <td> Next Rare </td>
                     <td> {nextRare.Name} </td>
-                    <td> {TimeZoneInfo.ConvertTimeFromUtc(nextStartTime, cstZone).ToShortTimeString()} CST </td>
+                    <td> {TimeZoneInfo.ConvertTimeFromUtc(nextStartTime, _cstZone).ToShortTimeString()} CST </td>
                     <td id = ""next""></td>
                     <td> <a href=""{nextRare.WowHeadUrl}"" target=""_blank"">Link</a> </td>
                     <td> <button onclick=""copyMacroToClipboard({nextRare.Xcoord},{nextRare.Ycoord})"">Copy Macro</button> </td>
@@ -137,7 +142,9 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                 </div>
              <script>
                 // Set the date we're counting down to
-                var countDownDate = new Date(""Jan 5, 2021 15:37:25"").getTime();
+                //var lastRareDate = new Date(""{lastStartTime} CST"").getTime();
+                var upcomingRareDate = new Date(""{upcomingStartTime} CST"").getTime();
+                var nextRareDate = new Date(""{nextStartTime} CST"").getTime();
 
             // Update the count down every 1 second
             var x = setInterval(function() {{
@@ -146,22 +153,32 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                 var now = new Date().getTime();
 
                 // Find the distance between now and the count down date
-                var distance = countDownDate - now;
+                //var lastDistance = lastRareDate - now;
+                var upcomingDistance = upcomingRareDate - now;
+                var nextDistance = nextRareDate - now;
 
-                // Time calculations for days, hours, minutes and seconds
-                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
+                // Time calculations for minutes and seconds
                 // Output the result in an element
-                document.getElementById(""last"").innerHTML = minutes + ""m "" + seconds + ""s "";
-                document.getElementById(""upcoming"").innerHTML = minutes + ""m "" + seconds + ""s "";
-                document.getElementById(""next"").innerHTML = minutes + ""m "" + seconds + ""s "";
+                //document.getElementById(""last"").innerHTML = Math.floor((lastDistance % (1000 * 60 * 60)) / (1000 * 60)) + ""m "" + Math.floor((lastDistance % (1000 * 60)) / 1000) + ""s "";
+
+                // Time calculations for minutes and seconds
+                // Output the result in an element
+                document.getElementById(""upcoming"").innerHTML = Math.floor((upcomingDistance % (1000 * 60 * 60)) / (1000 * 60)) + ""m "" + Math.floor((upcomingDistance % (1000 * 60)) / 1000) + ""s "";
+
+                // Time calculations for minutes and seconds
+                // Output the result in an element
+                document.getElementById(""next"").innerHTML = Math.floor((nextDistance % (1000 * 60 * 60)) / (1000 * 60)) + ""m "" + Math.floor((nextDistance % (1000 * 60)) / 1000) + ""s "";
 
                 // If the count down is over, write some text 
-                if (distance <0)
+                document.getElementById(""last"").innerHTML = ""Spawned"";
+                if (upcomingDistance <0)
+                {{
+                    document.getElementById(""upcoming"").innerHTML = ""Spawned"";
+                }}
+                if (nextDistance <0)
                 {{
                     clearInterval(x);
-                    document.getElementById(""demo"").innerHTML = ""Spawned"";
+                    document.getElementById(""next"").innerHTML = ""Spawned"";
                 }}
             }}, 1000);
             function copyMacroToClipboard(x,y) {{
