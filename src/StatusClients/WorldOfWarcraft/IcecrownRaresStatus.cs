@@ -108,34 +108,30 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                     <th> Name </th>
                     <th> Start Time </th>
                     <th> Countdown </th>
-                    <th> Wowhead Mob Info </th>
                     <th> Map Waypoint </th>
                 </tr>
          
                 <tr>
                     <td> Last Rare </td>
-                    <td> {lastRare.Name} </td>
+                    <td> <a href=""{lastRare.WowHeadUrl}"" target=""_blank"">{lastRare.Name}</a> </td>
                     <td> {TimeZoneInfo.ConvertTimeFromUtc(lastStartTime, _cstZone).ToShortTimeString()} CST </td>
                     <td id = ""last""></td>
-                    <td> <a href=""{lastRare.WowHeadUrl}"" target=""_blank"">Link</a> </td>
                     <td> <button onclick=""copyMacroToClipboard({lastRare.Xcoord},{lastRare.Ycoord})"">Copy Macro</button> </td>
                 </tr>
          
                 <tr>
                     <td> Upcoming Rare </td>
-                    <td> {upcomingRare.Name} </td>
+                    <td> <a href=""{upcomingRare.WowHeadUrl}"" target=""_blank"">{upcomingRare.Name}</a> </td>
                     <td> {TimeZoneInfo.ConvertTimeFromUtc(upcomingStartTime, _cstZone).ToShortTimeString()} CST </td>
                     <td id = ""upcoming""></td>
-                    <td> <a href=""{upcomingRare.WowHeadUrl}"" target=""_blank"">Link</a> </td>
                     <td> <button onclick=""copyMacroToClipboard({upcomingRare.Xcoord},{upcomingRare.Ycoord})"">Copy Macro</button> </td>
                 </tr>
          
                 <tr>
                     <td> Next Rare </td>
-                    <td> {nextRare.Name} </td>
+                    <td> <a href=""{nextRare.WowHeadUrl}"" target=""_blank"">{nextRare.Name}</a> </td>
                     <td> {TimeZoneInfo.ConvertTimeFromUtc(nextStartTime, _cstZone).ToShortTimeString()} CST </td>
                     <td id = ""next""></td>
-                    <td> <a href=""{nextRare.WowHeadUrl}"" target=""_blank"">Link</a> </td>
                     <td> <button onclick=""copyMacroToClipboard({nextRare.Xcoord},{nextRare.Ycoord})"">Copy Macro</button> </td>
                 </tr>
 
