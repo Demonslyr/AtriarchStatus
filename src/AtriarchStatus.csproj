@@ -7,4 +7,10 @@
     <AssemblyName>AtriarchStatus</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Update="StatusClients\WorldOfWarcraft\icrares.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

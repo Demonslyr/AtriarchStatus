@@ -1,23 +1,36 @@
 using AtriarchStatus.StatusClients.StarCitizen;
+using AtriarchStatus.StatusClients.WorldOfWarcraft;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using Microsoft.Extensions.Caching.Memory;
+using System.Text;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace AtriarchStatus
 {
+    public class HtmlOutputFormatter : StringOutputFormatter
+    {
+        public HtmlOutputFormatter()
+        {
+            SupportedMediaTypes.Add("text/html");
+        }
+    }
     public class Startup
     {
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllersWithViews();
+
             services.AddMemoryCache();
             services.AddHttpClient();
             services.AddSingleton<StarCitizenStatus>();
+            services.AddSingleton<IcecrownRaresStatus>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +67,30 @@ namespace AtriarchStatus
                         await context.Response.WriteAsync(resultString);
                     }
                 });
+                endpoints.MapControllers();
+/*                endpoints.MapGet("/wow/icrares", async context =>
+                {
+                    var resultString = "Failed to get status";
+                    try
+                    {
+                        var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
+                        var cacheEntry = await cache.GetOrCreateAsync<string>("wow/icrares", async entry =>
+                        {
+                            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(15);
+                            var icrares = context.RequestServices.GetRequiredService<IcecrownRaresStatus>();
+                            var statusResult = await icrares.GetUpcomingRare();
+                            return string.IsNullOrWhiteSpace(statusResult)
+                                ? "Failed to get status"
+                                : statusResult;
+                        });
+                        resultString = cacheEntry;
+                    }
+                    finally
+                    {
+                        context.Response.ContentType = "html";
+                        await context.Response.WriteAsync(resultString,Encoding.UTF8);
+                    }
+                });*/
             });
         }
     }
