@@ -46,7 +46,10 @@ namespace AtriarchStatus
                 endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Healthy"); });
                 endpoints.MapGet("/WoW/ICRares", async context =>
                 {
-                    var resultString = "NewEndpoint.";
+                    const string failureResponse = @"<html><head><meta http-equiv=""refresh"" content=""30""></head><body>" +
+                                       "Failed to get status"
+                                       + @"</body></html>";
+                    var resultString = failureResponse;
                     try
                     {
                         var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
@@ -56,18 +59,14 @@ namespace AtriarchStatus
                             var icrares = context.RequestServices.GetRequiredService<IcecrownRaresStatus>();
                             var statusResult = icrares.GetUpcomingRare();
                             return string.IsNullOrWhiteSpace(statusResult)
-                                ? "Failed to get status"
+                                ? failureResponse
                                 : statusResult;
                         });
                         resultString = cacheEntry;
                     }
                     finally
                     {
-                        await context.Response.WriteAsync(
-                            @"<html><head><meta http-equiv=""refresh"" content=""30""></head><body>" +
-                            resultString
-                            + @"</body></html>"
-                        );
+                        await context.Response.WriteAsync(resultString);
                     }
                 });
                 endpoints.MapGet("/StarCitizen/GlobalStatus", async context =>
