@@ -43,7 +43,7 @@ namespace AtriarchStatus
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Healthy"); });
+                endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Healthy"); })
                 endpoints.MapGet("/StarCitizen/GlobalStatus", async context =>
                 {
                     var resultString = "Failed to get status.";
@@ -86,7 +86,7 @@ namespace AtriarchStatus
                     finally
                     {
                         context.Response.ContentType = "html";
-                        await context.Response.WriteAsync(resultString,Encoding.UTF8);
+                        await context.Response.WriteAsync(resultString);
                     }
                 });
             });
