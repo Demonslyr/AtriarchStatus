@@ -11,7 +11,6 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
         private const int RareRotationTotal = 400; //minutes
         private const int RareSpawnOffset = 20; // minutes
         private static readonly DateTime BaseDate = new DateTime(2020, 11, 12, 23, 0, 0); //noth-the-plaguebringer start utc
-        //private readonly TimeZoneInfo _cstZone = TimeZoneInfo.CreateCustomTimeZone("Central Standard Time", new TimeSpan(-6,00,00), "(GMT - 06:00) America/Chicago", "Central Standard Time");
         private const string PrepatchInfoWowHeadUrl = @"https://www.wowhead.com/guides/shadowlands-deaths-rising-prelaunch-event-scourge-invasions#icecrown-bosses";
         
         // modulo function that doesn't output negative numbers. Pretty much lets the array loop.
