@@ -14,7 +14,7 @@ stages:
 timeout: 10
 notification:
   recipients:
-  - recipient: dan@mail.atriarch.systems
-    notifier: c-xc9r9:n-g2gcc
+  - recipient: pipelineNotifications@mail.atriarch.systems
+    notifier: c-56lvs:n-45qs9
   condition:
   - Failed
