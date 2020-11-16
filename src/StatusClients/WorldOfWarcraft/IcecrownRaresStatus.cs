@@ -27,13 +27,13 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
             var spawnsIntoRotation = Mod(minutesApart, RareRotationTotal) / RareSpawnOffset;
             var offsetBaseDate = BaseDate.AddMinutes(rotationsSinceBase * RareRotationTotal);
             
-            var lastStartTime = offsetBaseDate.AddMinutes((spawnsIntoRotation-1) * RareSpawnOffset);
-            var upcomingStartTime = offsetBaseDate.AddMinutes(spawnsIntoRotation * RareSpawnOffset);
-            var nextStartTime = offsetBaseDate.AddMinutes((spawnsIntoRotation + 1) * RareSpawnOffset);
+            var lastStartTime = offsetBaseDate.AddMinutes(spawnsIntoRotation * RareSpawnOffset);
+            var upcomingStartTime = offsetBaseDate.AddMinutes((spawnsIntoRotation + 1) * RareSpawnOffset);
+            var nextStartTime = offsetBaseDate.AddMinutes((spawnsIntoRotation + 2) * RareSpawnOffset);
             
-            var lastRare = IcecrownRareConstants.Rares[Mod(spawnsIntoRotation - 1, RareSpawnOffset)];
-            var upcomingRare = IcecrownRareConstants.Rares[Mod(spawnsIntoRotation, RareSpawnOffset)];
-            var nextRare = IcecrownRareConstants.Rares[Mod(spawnsIntoRotation + 1, RareSpawnOffset)];
+            var lastRare = IcecrownRareConstants.Rares[Mod(spawnsIntoRotation, RareSpawnOffset)];
+            var upcomingRare = IcecrownRareConstants.Rares[Mod(spawnsIntoRotation + 1, RareSpawnOffset)];
+            var nextRare = IcecrownRareConstants.Rares[Mod(spawnsIntoRotation + 2, RareSpawnOffset)];
 
             // get current time
             // offset the base time to current rotation
