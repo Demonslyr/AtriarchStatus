@@ -1,5 +1,6 @@
 ﻿using AtriarchStatus.StatusClients.WorldOfWarcraft.Constants;
 using System;
+using System.Linq;
 
 namespace AtriarchStatus.StatusClients.WorldOfWarcraft
 {
@@ -31,6 +32,13 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
             var lastRare = IcecrownRareConstants.Rares[Mod(spawnsIntoRotation, IcecrownRareConstants.Rares.Length)];
             var upcomingRare = IcecrownRareConstants.Rares[Mod(spawnsIntoRotation + 1, IcecrownRareConstants.Rares.Length)];
             var nextRare = IcecrownRareConstants.Rares[Mod(spawnsIntoRotation + 2, IcecrownRareConstants.Rares.Length)];
+
+            var tabelString = string.Join(
+                "",
+                IcecrownRareConstants.Rares.Select((record, index) =>
+                $@"<tr><td><a href=""{record.WowHeadUrl}"" target=""_blank"">{record.Name}</a></td><td>{offsetBaseDate.AddMinutes(index * RareSpawnOffset)} UTC</td><td><button onclick=""copyMacroToClipboard({record.Xcoord},{record.Ycoord})"" > Copy Macro </button></td></tr>")
+                );
+
 
             // get current time
             // offset the base time to current rotation
@@ -68,6 +76,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                 </head>
                 <body>
                 <a href=""{PrepatchInfoWowHeadUrl}"" target=""_blank""><h2>Prepatch Wowhead Info</h2></a>
+                <h2>Rare Schedule</h2>
                 <div style=""overflow - x:auto; "">
                 <table>
    
@@ -103,6 +112,20 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                     <td> <button onclick=""copyMacroToClipboard({nextRare.Xcoord},{nextRare.Ycoord})"">Copy Macro</button> </td>
                 </tr>
 
+                </table>
+                </div>
+                </br>
+                </br>
+                <h2>Rare Spawn List</h2>
+                <div style=""overflow - x:auto; "">
+                <table>
+   
+                <tr>
+                    <th> Name </th>
+                    <th> Spawn Time </th>
+                    <th> Map Waypoint </th>
+                </tr>
+                {tabelString}
                 </table>
                 </div>
              <script>
@@ -148,6 +171,9 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                 function copyMacroToClipboard(x,y) {{
                   var macroText = `/run C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(118,${{x}}/100,${{y}}/100));C_SuperTrack.SetSuperTrackedUserWaypoint(true);`;
                   navigator.clipboard.writeText(macroText);
+                }}
+                function convertToLocalTime(dateTimeString) {{
+                  return new Date(dateTimeString+"" UTC"").getTime();
                 }}
             </script>
             </body>
