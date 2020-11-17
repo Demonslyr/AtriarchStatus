@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Immutable;
-using AtriarchStatus.StatusClients.WorldOfWarcraft.Constants;
-using AtriarchStatus.StatusClients.WorldOfWarcraft.Models;
-using TimeZoneConverter;
+﻿using AtriarchStatus.StatusClients.WorldOfWarcraft.Constants;
+using System;
 
 namespace AtriarchStatus.StatusClients.WorldOfWarcraft
 {
     public class IcecrownRaresStatus
     {
-        private const int RareRotationTotal = 200; //minutes
         private const int RareSpawnOffset = 10; // minutes
+        private static int RareRotationTotal = (IcecrownRareConstants.Rares.Length*RareSpawnOffset); //minutes
         private static readonly DateTime BaseDate = new DateTime(2020, 11, 16, 23, 40, 0); //noth-the-plaguebringer start utc
         private const string PrepatchInfoWowHeadUrl = @"https://www.wowhead.com/guides/shadowlands-deaths-rising-prelaunch-event-scourge-invasions#icecrown-bosses";
         
