@@ -75,7 +75,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
             </style>
                 </head>
                 <body>
-                <a href=""{PrepatchInfoWowHeadUrl}"" target=""_blank""><h2>Prepatch Wowhead Info</h2></a>
+                <a href=""{PrepatchInfoWowHeadUrl}"" target=""_blank""><h2>Click for Prepatch Wowhead Info</h2></a>
                 <h2>Rare Schedule</h2>
                 <div style=""overflow - x:auto; "">
                 <table>
