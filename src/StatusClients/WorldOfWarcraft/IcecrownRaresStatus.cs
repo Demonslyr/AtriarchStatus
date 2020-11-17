@@ -148,7 +148,6 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                 function copyMacroToClipboard(x,y) {{
                   var macroText = `/run C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(118,${{x}}/100,${{y}}/100));C_SuperTrack.SetSuperTrackedUserWaypoint(true);`;
                   navigator.clipboard.writeText(macroText);
-                  alert(""Copied to clipboard: "" + macroText);
                 }}
             </script>
             </body>
