@@ -83,7 +83,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                 <tr>
                     <th></th>
                     <th> Name </th>
-                    <th> Spawn Time </th>
+                    <th> Spawn Time ( Local )</th>
                     <th> Countdown </th>
                     <th> Map Waypoint </th>
                 </tr>
@@ -122,7 +122,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
    
                 <tr>
                     <th> Name </th>
-                    <th> Spawn Time </th>
+                    <th> Current Cycle Spawn Time </th>
                     <th> Map Waypoint </th>
                 </tr>
                 {tabelString}
