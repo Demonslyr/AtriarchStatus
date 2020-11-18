@@ -62,8 +62,10 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                 table {{
                   border-collapse: collapse;
                   border-spacing: 0;
-                  width: 100%;
+                  width: 90%;
                   border: 1px solid #ddd;
+                  margin-left: auto;
+                  margin-right: auto;
                 }}
 
                 th, td {{
