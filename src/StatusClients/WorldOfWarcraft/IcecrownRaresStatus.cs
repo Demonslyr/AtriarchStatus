@@ -36,7 +36,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
             var tabelString = string.Join(
                 "",
                 IcecrownRareConstants.Rares.Select((record, index) =>
-                $@"<tr><td><a href=""{record.WowHeadUrl}"" target=""_blank"">{record.Name}</a></td><td>{offsetBaseDate.AddMinutes(index * RareSpawnOffset)} UTC</td><td><button onclick=""copyMacroToClipboard({record.Xcoord},{record.Ycoord})"" > Copy Macro </button></td></tr>")
+                $@"<tr><td><a href=""{record.WowHeadUrl}"" target=""_blank"">{record.Name}</a></td><td>{offsetBaseDate.AddMinutes(index * RareSpawnOffset)} UTC</td><td><button onclick=""copyMacroToClipboard({record.Xcoord},{record.Ycoord})"" > Copy Macro </button></td><td> <button onclick=""copySharableMacroToClipboard({record.Xcoord},{record.Ycoord})"">Copy Macro</button> </td></tr>")
                 );
 
 
@@ -88,6 +88,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                     <th> Spawn Time ( Local )</th>
                     <th> Countdown </th>
                     <th> Map Waypoint </th>
+                    <th> Announce Waypoint to Chat </th>
                 </tr>
          
                 <tr>
@@ -96,6 +97,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                     <td id = ""lastTime""> </td>
                     <td id = ""last""></td>
                     <td> <button onclick=""copyMacroToClipboard({lastRare.Xcoord},{lastRare.Ycoord})"">Copy Macro</button> </td>
+                    <td> <button onclick=""copySharableMacroToClipboard({lastRare.Xcoord},{lastRare.Ycoord})"">Copy Macro</button> </td>
                 </tr>
          
                 <tr>
@@ -104,6 +106,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                     <td id = ""upcomingTime""> </td>
                     <td id = ""upcoming""></td>
                     <td> <button onclick=""copyMacroToClipboard({upcomingRare.Xcoord},{upcomingRare.Ycoord})"">Copy Macro</button> </td>
+                    <td> <button onclick=""copySharableMacroToClipboard({upcomingRare.Xcoord},{upcomingRare.Ycoord})"">Copy Macro</button> </td>
                 </tr>
          
                 <tr>
@@ -112,6 +115,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                     <td id = ""nextTime""> </td>
                     <td id = ""next""></td>
                     <td> <button onclick=""copyMacroToClipboard({nextRare.Xcoord},{nextRare.Ycoord})"">Copy Macro</button> </td>
+                    <td> <button onclick=""copySharableMacroToClipboard({nextRare.Xcoord},{nextRare.Ycoord})"">Copy Macro</button> </td>
                 </tr>
 
                 </table>
@@ -126,6 +130,7 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                     <th> Name </th>
                     <th> Current Cycle Spawn Time </th>
                     <th> Map Waypoint </th>
+                    <th> Announce Waypoint to Chat </th>
                 </tr>
                 {tabelString}
                 </table>
@@ -172,6 +177,10 @@ namespace AtriarchStatus.StatusClients.WorldOfWarcraft
                 }}, 1000);
                 function copyMacroToClipboard(x,y) {{
                   var macroText = `/run C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(118,${{x}}/100,${{y}}/100));C_SuperTrack.SetSuperTrackedUserWaypoint(true);`;
+                  navigator.clipboard.writeText(macroText);
+                }}
+                function copySharableMacroToClipboard(x,y) {{
+                  var macroText = `/run C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(118,${{x}}/100,${{y}}/100));C_SuperTrack.SetSuperTrackedUserWaypoint(true);SendChatMessage(format(""%s"",C_Map.GetUserWaypointHyperlink()),""CHANNEL"",nil,1)`;
                   navigator.clipboard.writeText(macroText);
                 }}
                 function convertToLocalTime(dateTimeString) {{
